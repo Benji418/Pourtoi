@@ -233,6 +233,10 @@
             justify-content: center;
         }
 
+        .chests-wrapper.three-chests {
+            gap: 40px;
+        }
+
         /* Coffre */
         .chest-container {
             position: relative;
@@ -284,6 +288,11 @@
             will-change: transform;
         }
 
+        .chest-body.empty {
+            background: linear-gradient(180deg, #a89a7f 0%, #8b7d68 45%, #6b5d52 100%);
+            border: 3px solid #4a3f36;
+        }
+
         .chest-lid {
             position: absolute;
             top: -2px;
@@ -300,6 +309,11 @@
                 inset 0 3px 8px rgba(255, 255, 255, 0.3);
             will-change: transform;
             backface-visibility: hidden;
+        }
+
+        .chest-lid.empty {
+            background: linear-gradient(180deg, #9d937f 0%, #8b7d68 45%, #6b5d52 100%);
+            border: 3px solid #4a3f36;
         }
 
         .chest.open .chest-lid {
@@ -322,6 +336,11 @@
                 0 4px 12px rgba(0, 0, 0, 0.5),
                 inset -1px -1px 3px rgba(0, 0, 0, 0.3),
                 inset 1px 1px 3px rgba(255, 255, 255, 0.3);
+        }
+
+        .chest-lock.empty {
+            background: radial-gradient(circle at 30% 30%, #8b7d68 0%, #6b5d52 40%, #4a3f36 100%);
+            border: 3px solid #2a1f16;
         }
 
         .chest-lock::after {
@@ -352,6 +371,10 @@
             will-change: opacity;
         }
 
+        .chest-glow.empty {
+            background: radial-gradient(circle, rgba(139, 125, 104, 0.15) 0%, transparent 70%);
+        }
+
         @media (hover: hover) {
             .chest-container:hover .chest-glow {
                 opacity: 1;
@@ -377,6 +400,10 @@
             transition: opacity 0.5s ease-out;
             pointer-events: none;
             will-change: opacity;
+        }
+
+        .chest-light.empty {
+            background: radial-gradient(circle, rgba(139, 125, 104, 0.5) 0%, transparent 65%);
         }
 
         .chest.open .chest-light {
@@ -412,6 +439,11 @@
             will-change: transform, opacity;
         }
 
+        .particle.empty {
+            background: radial-gradient(circle, #8b7d68, #6b5d52);
+            box-shadow: 0 0 4px rgba(139, 125, 104, 0.5);
+        }
+
         .chest.open .particle {
             animation: particleBurst 1.6s ease-out forwards;
         }
@@ -441,6 +473,13 @@
             will-change: transform, opacity;
             pointer-events: none;
             -webkit-font-smoothing: antialiased;
+        }
+
+        .reward.empty {
+            border: 2px solid #8b7d68;
+            box-shadow: 
+                0 20px 50px rgba(0, 0, 0, 0.5),
+                0 0 20px rgba(139, 125, 104, 0.1);
         }
 
         .chest.open ~ .reward {
@@ -512,6 +551,11 @@
             .chests-wrapper {
                 gap: 30px;
             }
+
+            .chests-wrapper.three-chests {
+                gap: 25px;
+                justify-content: center;
+            }
             
             .chest-container {
                 width: 160px;
@@ -575,11 +619,54 @@
         <!-- Bouton suivant -->
         <button class="next-btn" id="nextBtn" aria-label="Continuer">Continuer →</button>
 
-        <!-- Section des coffres -->
+        <!-- Section des coffres (choix) -->
+        <div class="chests-container" id="chestsChoiceContainer">
+            <div class="chests-title">Fais un choix</div>
+            <div class="chests-subtitle">Je t'explique après</div>
+            <div class="chests-wrapper three-chests" id="chestsChoice">
+                <!-- Coffre Choix 1 -->
+                <div class="chest-container" onclick="selectChest(1)">
+                    <div class="chest" id="chest-choice-1">
+                        <div class="chest-glow"></div>
+                        <div class="chest-light"></div>
+                        <div class="chest-lid"></div>
+                        <div class="chest-body"></div>
+                        <div class="chest-lock"></div>
+                        <div class="particles" id="particles-choice-1"></div>
+                    </div>
+                </div>
+
+                <!-- Coffre Choix 2 -->
+                <div class="chest-container" onclick="selectChest(2)">
+                    <div class="chest" id="chest-choice-2">
+                        <div class="chest-glow"></div>
+                        <div class="chest-light"></div>
+                        <div class="chest-lid"></div>
+                        <div class="chest-body"></div>
+                        <div class="chest-lock"></div>
+                        <div class="particles" id="particles-choice-2"></div>
+                    </div>
+                </div>
+
+                <!-- Coffre Choix 3 (vide) -->
+                <div class="chest-container" onclick="selectChest(3)">
+                    <div class="chest" id="chest-choice-3">
+                        <div class="chest-glow empty"></div>
+                        <div class="chest-light empty"></div>
+                        <div class="chest-lid empty"></div>
+                        <div class="chest-body empty"></div>
+                        <div class="chest-lock empty"></div>
+                        <div class="particles" id="particles-choice-3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section des coffres (résultats) -->
         <div class="chests-container" id="chestsContainer">
-            <div class="chests-title">Choisis ton coffre</div>
-            <div class="chests-subtitle">Clique sur l'un des deux coffres</div>
-            <div class="chests-wrapper">
+            <div class="chests-title">Voyons voir</div>
+            <div class="chests-subtitle">Tu as choisi le coffre</div>
+            <div class="chests-wrapper" id="chestsResult">
                 <!-- Coffre 1 -->
                 <div class="chest-container" role="button" tabindex="0" onclick="openChest(1)" onkeydown="if(event.key==='Enter'||event.key===' ') openChest(1)" aria-label="Coffre 1">
                     <div class="chest" id="chest1">
@@ -593,9 +680,7 @@
                     <div class="reward" id="reward1">
                         <div class="reward-text">
                             <span class="emoji">✨</span>
-                            Félicitations.<br><br>
-                            Tu as l'honneur de gagner<br>
-                            un date avec moi.<br><br>
+                            Un date avec moi.<br><br>
                             Je sais.<br>
                             La concurrence était rude.
                         </div>
@@ -614,16 +699,28 @@
                     </div>
                     <div class="reward" id="reward2">
                         <div class="reward-text">
-                            <span class="emoji">✨</span>
-                            Félicitations.<br><br>
-                            Tu as gagné le droit<br>
-                            de me donner un gage.<br><br>
-                            Une seule règle :<br>
-                            Il doit rester dans<br>
-                            les limites de mes<br>
-                            capacités et de ma dignité.<br><br>
-                            À utiliser avec<br>
-                            discernement.
+                            <span class="emoji">🎭</span>
+                            Le droit de me donner un gage.<br><br>
+                            Une règle :<br>
+                            Dans les limites de ma dignité.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coffre 3 (Vide) -->
+                <div class="chest-container" role="button" tabindex="0" onclick="openChest(3)" onkeydown="if(event.key==='Enter'||event.key===' ') openChest(3)" aria-label="Coffre 3">
+                    <div class="chest" id="chest3">
+                        <div class="chest-glow empty"></div>
+                        <div class="chest-light empty"></div>
+                        <div class="chest-lid empty"></div>
+                        <div class="chest-body empty"></div>
+                        <div class="chest-lock empty"></div>
+                        <div class="particles" id="particles3"></div>
+                    </div>
+                    <div class="reward empty" id="reward3">
+                        <div class="reward-text">
+                            ...<br><br>
+                            Pas mal comme choix.
                         </div>
                     </div>
                 </div>
@@ -634,19 +731,20 @@
     <script>
         // Données des cartes
         const cardsData = [
-            { header: "Eden", text: "" },
-            { header: "Eden", text: "J'ai pensé à toi aujourd'hui. Pas une seule fois." },
-            { header: "Eden", text: "Tu vas scroll. Sans vraiment comprendre pourquoi." },
-            { header: "Eden", text: "C'est déjà pas mal de rester quand on ne sait pas où on va." },
-            { header: "Eden", text: "Les gens qui restent. Ceux qui continuent. C'est rare." },
-            { header: "Eden", text: "Toi tu as pas fui ce que tu ne comprenais pas." },
-            { header: "Eden", text: "Je crois que ça dit quelque chose d'important sur toi." },
-            { header: "Eden", text: "Sur ce que tu es." },
-            { header: "Eden", text: "Choisis." }
+            { header: "Eden", text: "Il s'agit d'un petit programme que j'ai conçu." },
+            { header: "Eden", text: "Rien de particulièrement complexe." },
+            { header: "Eden", text: "Je trouvais simplement l'idée plus intéressante qu'un simple message." },
+            { header: "Eden", text: "Parce que ceux qui brillent méritent un peu plus qu'un simple message." },
+            { header: "Eden", text: "Tu ne trouves pas ?" },
+            { header: "Eden", text: "L'idée a fini par s'imposer toute seule." },
+            { header: "Eden", text: "Alors au lieu de la laisser traîner dans un coin de ma tête," },
+            { header: "Eden", text: "j'ai décidé de lui donner une forme un peu plus concrète." },
+            { header: "Eden", text: "Bref." }
         ];
 
         let currentCard = 0;
         let chestsOpened = 0;
+        let selectedChest = null;
         let isAnimating = false;
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
         const isLowPower = navigator.deviceMemory <= 4 || navigator.hardwareConcurrency <= 2;
@@ -690,7 +788,7 @@
 
             const nextBtn = document.getElementById('nextBtn');
             if (currentCard >= cardsData.length - 1) {
-                nextBtn.textContent = "Voir les coffres →";
+                nextBtn.textContent = "Choisir →";
             } else {
                 nextBtn.textContent = "Continuer →";
             }
@@ -708,7 +806,7 @@
                     isAnimating = false;
                 }, 700);
             } else {
-                showChests();
+                showChestChoice();
             }
         });
 
@@ -720,17 +818,35 @@
             }
         });
 
-        // Afficher les coffres
-        function showChests() {
+        // Afficher le choix des coffres
+        function showChestChoice() {
             document.getElementById('cardStack').style.display = 'none';
             document.getElementById('nextBtn').classList.add('hidden');
+            document.getElementById('chestsChoiceContainer').classList.add('show');
+        }
+
+        // Sélectionner un coffre
+        function selectChest(num) {
+            selectedChest = num;
+            document.getElementById('chestsChoiceContainer').classList.remove('show');
+            showChestResults();
+        }
+
+        // Afficher les résultats
+        function showChestResults() {
+            const subtitle = document.querySelector('#chestsContainer .chests-subtitle');
+            subtitle.textContent = `Tu as choisi le coffre n°${selectedChest}`;
             document.getElementById('chestsContainer').classList.add('show');
         }
 
         // Créer les particules
-        function createParticles(chestNum) {
-            const particlesContainer = document.getElementById(`particles${chestNum}`);
-            const colors = ['#d9c895', '#c9a961', '#b8934d', '#8b6f47'];
+        function createParticles(chestNum, isChoice = false) {
+            const containerId = isChoice ? `particles-choice-${chestNum}` : `particles${chestNum}`;
+            const particlesContainer = document.getElementById(containerId);
+            const isEmpty = (isChoice && chestNum === 3) || (!isChoice && chestNum === 3);
+            const colors = isEmpty 
+                ? ['#8b7d68', '#6b5d52'] 
+                : ['#d9c895', '#c9a961', '#b8934d', '#8b6f47'];
             const particleCount = isLowPower ? 12 : 18;
             
             particlesContainer.innerHTML = '';
@@ -738,6 +854,7 @@
             for (let i = 0; i < particleCount; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'particle';
+                if (isEmpty) particle.classList.add('empty');
                 particle.style.background = colors[Math.floor(Math.random() * colors.length)];
                 
                 const angle = (Math.PI * 2 * i) / particleCount;
@@ -761,7 +878,7 @@
                 chestsOpened++;
                 createParticles(num);
                 
-                if (chestsOpened === 2) {
+                if (chestsOpened === 1) {
                     setTimeout(createConfetti, 900);
                 }
             }
