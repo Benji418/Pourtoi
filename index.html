@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pour Eden</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=TikTok+Sans:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'TikTok Sans', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Fond décoratif */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(254, 44, 85, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Apparition du prénom */
+        .intro {
+            text-align: center;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeInName 2s ease forwards;
+        }
+
+        .intro-text {
+            font-size: 48px;
+            font-weight: 900;
+            color: #ffd700;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            letter-spacing: 3px;
+        }
+
+        @keyframes fadeInName {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+                filter: blur(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+                filter: blur(0);
+            }
+        }
+
+        /* Pile de cartes */
+        .card-stack {
+            position: relative;
+            min-height: 450px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            position: absolute;
+            width: 100%;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f8f8 100%);
+            border-radius: 20px;
+            padding: 50px 40px;
+            box-shadow: 
+                0 10px 40px rgba(0, 0, 0, 0.4),
+                0 0 0 2px rgba(255, 215, 0, 0.3);
+            text-align: center;
+            opacity: 0;
+            transform: translateY(30px) scale(0.9);
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .card.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            z-index: 10;
+        }
+
+        .card.hidden {
+            opacity: 0;
+            transform: translateY(-30px) scale(0.9);
+            z-index: 1;
+        }
+
+        .card-text {
+            font-size: 26px;
+            font-weight: 700;
+            color: #1a1a1a;
+            line-height: 1.5;
+        }
+
+        .card-number {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 14px;
+            color: #999;
+            font-weight: 400;
+        }
+
+        /* Bouton suivant */
+        .next-btn {
+            display: block;
+            margin: 30px auto 0;
+            padding: 18px 50px;
+            background: linear-gradient(135deg, #fe2c55 0%, #ff4d6d 100%);
+            color: white;
+            border: none;
+            border-radius: 35px;
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'TikTok Sans', sans-serif;
+            transition: all 0.3s;
+            box-shadow: 0 6px 20px rgba(254, 44, 85, 0.4);
+        }
+
+        .next-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(254, 44, 85, 0.6);
+        }
+
+        .next-btn:active {
+            transform: translateY(0);
+        }
+
+        .next-btn.hidden {
+            display: none;
+        }
+
+        /* Section des coffres */
+        .chests-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+            margin-top: 50px;
+            animation: fadeIn 1s ease;
+        }
+
+        .chests-container.show {
+            display: flex;
+        }
+
+        .chests-title {
+            font-size: 36px;
+            font-weight: 900;
+            color: #ffd700;
+            text-align: center;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            letter-spacing: 2px;
+        }
+
+        .chests-subtitle {
+            font-size: 18px;
+            color: #ccc;
+            text-align: center;
+            margin-top: -20px;
+            margin-bottom: 20px;
+        }
+
+        .chests-wrapper {
+            display: flex;
+            gap: 60px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* Coffre */
+        .chest-container {
+            position: relative;
+            width: 220px;
+            height: 180px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .chest-container:hover {
+            transform: scale(1.05);
+        }
+
+        .chest {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .chest-body {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 120px;
+            background: linear-gradient(180deg, #ffd700 0%, #ffaa00 50%, #cc8800 100%);
+            border-radius: 12px;
+            border: 4px solid #b8860b;
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.5),
+                inset 0 5px 15px rgba(255, 255, 255, 0.3);
+        }
+
+        .chest-lid {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(180deg, #ffed4e 0%, #ffd700 50%, #ffaa00 100%);
+            border-radius: 25px 25px 12px 12px;
+            border: 4px solid #b8860b;
+            border-bottom: none;
+            transform-origin: bottom;
+            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        .chest.open .chest-lid {
+            transform: rotateX(-120deg);
+        }
+
+        .chest-lock {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle, #ffd700 0%, #b8860b 100%);
+            border-radius: 50%;
+            z-index: 10;
+            border: 3px solid #8b6914;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .chest-lock::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 15px;
+            height: 15px;
+            background: #1a1a1a;
+            border-radius: 50%;
+        }
+
+        /* Halo doré */
+        .chest-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 150%;
+            height: 150%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+        }
+
+        .chest-container:hover .chest-glow {
+            opacity: 1;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.5;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+                opacity: 0.8;
+            }
+        }
+
+        /* Lumière intérieure */
+        .chest-light {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.8) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+        }
+
+        .chest.open .chest-light {
+            opacity: 1;
+            animation: lightBurst 1s ease-out;
+        }
+
+        @keyframes lightBurst {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.5);
+            }
+            50% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.5);
+            }
+            100% {
+                opacity: 0.6;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        /* Particules */
+        .particles {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #ffd700;
+            border-radius: 50%;
+            opacity: 0;
+        }
+
+        .chest.open .particle {
+            animation: particleBurst 1.5s ease-out forwards;
+        }
+
+        @keyframes particleBurst {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--tx), var(--ty)) scale(0);
+            }
+        }
+
+        /* Récompense */
+        .reward {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 280px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f8f8 100%);
+            border: 3px solid #ffd700;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            opacity: 0;
+            z-index: 20;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .chest.open ~ .reward {
+            animation: rewardAppear 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+            animation-delay: 0.5s;
+        }
+
+        @keyframes rewardAppear {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0) rotate(-10deg);
+            }
+            50% {
+                transform: translate(-50%, -180%) scale(1.2) rotate(5deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -160%) scale(1) rotate(0deg);
+            }
+        }
+
+        .reward-text {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1a1a1a;
+            line-height: 1.5;
+        }
+
+        .reward-text .emoji {
+            font-size: 24px;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        /* Confettis */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* Responsive */
+        @media (max-width: 700px) {
+            .intro-text {
+                font-size: 36px;
+            }
+            
+            .card-text {
+                font-size: 20px;
+            }
+            
+            .chests-wrapper {
+                gap: 30px;
+            }
+            
+            .chest-container {
+                width: 180px;
+                height: 150px;
+            }
+            
+            .reward {
+                width: 240px;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Apparition du prénom -->
+        <div class="intro">
+            <div class="intro-text">Eden.</div>
+        </div>
+
+        <!-- Pile de cartes -->
+        <div class="card-stack" id="cardStack"></div>
+
+        <!-- Bouton suivant -->
+        <button class="next-btn" id="nextBtn">Continuer →</button>
+
+        <!-- Section des coffres -->
+        <div class="chests-container" id="chestsContainer">
+            <div class="chests-title">Choisis ton coffre</div>
+            <div class="chests-subtitle">Clique sur l'un des deux coffres</div>
+            <div class="chests-wrapper">
+                <!-- Coffre 1 -->
+                <div class="chest-container" onclick="openChest(1)">
+                    <div class="chest" id="chest1">
+                        <div class="chest-glow"></div>
+                        <div class="chest-light"></div>
+                        <div class="chest-lid"></div>
+                        <div class="chest-body"></div>
+                        <div class="chest-lock"></div>
+                        <div class="particles" id="particles1"></div>
+                    </div>
+                    <div class="reward" id="reward1">
+                        <div class="reward-text">
+                            <span class="emoji">✨</span>
+                            Félicitations.<br><br>
+                            Tu as l'honneur de gagner un date avec moi.<br><br>
+                            Je sais.<br>
+                            La concurrence était rude.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coffre 2 -->
+                <div class="chest-container" onclick="openChest(2)">
+                    <div class="chest" id="chest2">
+                        <div class="chest-glow"></div>
+                        <div class="chest-light"></div>
+                        <div class="chest-lid"></div>
+                        <div class="chest-body"></div>
+                        <div class="chest-lock"></div>
+                        <div class="particles" id="particles2"></div>
+                    </div>
+                    <div class="reward" id="reward2">
+                        <div class="reward-text">
+                            <span class="emoji">✨</span>
+                            Félicitations.<br><br>
+                            Tu as gagné le droit de me donner un gage.<br><br>
+                            Une seule règle :<br>
+                            Il doit rester dans les limites de mes capacités et de ma dignité.<br><br>
+                            À utiliser avec discernement.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Textes des cartes
+        const cardsData = [
+            "Eden.",
+            "Avant que tu ne te poses trop de questions : j'ai conçu ce programmepour toi.",
+            "J'aurais pu t’envoyer un simple message. Mais je préfère ce qui est original c'est beaucoup plus intéressant.",
+            "Alors te voilà. À faire défiler des cartes sans vraiment savoir pourquoi.",
+            "Ce qui est assez révélateur, maintenant que j'y pense.",
+            "Le plus étonnant, c'est que tu ne sais toujours pas où tout cela mène.",
+            "Et pourtant, tu es encore là. J'aime bien ce genre de constance.",
+            "Je crois que je t'ai suffisamment fait attendre. Enfin... juste assez.",
+            "Voici deux coffres. Choisis-en un. Et viens me dire ce que tu as gagné."
+        ];
+
+        let currentCard = 0;
+        let chestsOpened = 0;
+
+        // Initialisation
+        function init() {
+            const cardStack = document.getElementById('cardStack');
+            
+            // Créer les cartes
+            cardsData.forEach((text, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.id = `card${index}`;
+                card.innerHTML = `
+                    <div class="card-number">${index + 1}/${cardsData.length}</div>
+                    <div class="card-text">${text}</div>
+                `;
+                cardStack.appendChild(card);
+            });
+
+            // Afficher la première carte après un délai
+            setTimeout(() => {
+                updateCards();
+            }, 2500);
+        }
+
+        // Mettre à jour l'affichage des cartes
+        function updateCards() {
+            cardsData.forEach((_, index) => {
+                const card = document.getElementById(`card${index}`);
+                
+                if (index === currentCard) {
+                    card.classList.add('active');
+                    card.classList.remove('hidden');
+                } else if (index < currentCard) {
+                    card.classList.add('hidden');
+                    card.classList.remove('active');
+                } else {
+                    card.classList.remove('active', 'hidden');
+                }
+            });
+
+            // Mettre à jour le bouton
+            const nextBtn = document.getElementById('nextBtn');
+            if (currentCard >= cardsData.length - 1) {
+                nextBtn.textContent = "Voir les coffres ";
+            } else {
+                nextBtn.textContent = "Continuer →";
+            }
+        }
+
+        // Bouton suivant
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            if (currentCard < cardsData.length - 1) {
+                currentCard++;
+                updateCards();
+            } else {
+                showChests();
+            }
+        });
+
+        // Afficher les coffres
+        function showChests() {
+            document.getElementById('cardStack').style.display = 'none';
+            document.getElementById('nextBtn').classList.add('hidden');
+            document.getElementById('chestsContainer').classList.add('show');
+        }
+
+        // Créer les particules
+        function createParticles(chestNum) {
+            const particlesContainer = document.getElementById(`particles${chestNum}`);
+            const colors = ['#ffd700', '#ffaa00', '#ffffff', '#fe2c55'];
+            
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                
+                const angle = (Math.PI * 2 * i) / 20;
+                const distance = 100 + Math.random() * 50;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+                
+                particle.style.setProperty('--tx', `${tx}px`);
+                particle.style.setProperty('--ty', `${ty}px`);
+                particle.style.animationDelay = `${Math.random() * 0.3}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Ouvrir un coffre
+        function openChest(num) {
+            const chest = document.getElementById(`chest${num}`);
+            if (!chest.classList.contains('open')) {
+                chest.classList.add('open');
+                chestsOpened++;
+                
+                // Créer les particules
+                createParticles(num);
+                
+                // Effet de confettis si les deux coffres sont ouverts
+                if (chestsOpened === 2) {
+                    setTimeout(() => {
+                        createConfetti();
+                    }, 800);
+                }
+            }
+        }
+
+        // Effet de confettis
+        function createConfetti() {
+            const colors = ['#ffd700', '#fe2c55', '#ffffff', '#ffaa00'];
+            
+            for (let i = 0; i < 80; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.top = '-10px';
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    document.body.appendChild(confetti);
+                    
+                    const duration = Math.random() * 2000 + 1500;
+                    const rotation = Math.random() * 720;
+                    
+                    confetti.animate([
+                        { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+                        { transform: `translateY(${window.innerHeight}px) rotate(${rotation}deg)`, opacity: 0 }
+                    ], {
+                        duration: duration,
+                        easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                    }).onfinish = () => confetti.remove();
+                }, i * 30);
+            }
+        }
+
+        // Démarrage
+        init();
+    </script>
+</body>
+      </html>
